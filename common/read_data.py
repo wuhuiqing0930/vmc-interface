@@ -1,5 +1,6 @@
 import yaml
 import json
+import openpyxl
 from configparser import ConfigParser
 from common.logger import logger
 
@@ -91,6 +92,10 @@ class ConfigReadYML():
                     return _dict_tmp
         else:
             return self.config
+
+class ConfigReadXLXS():
+    pass
+
 
 # if __name__ == '__main__':
 # filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "setting.ini")

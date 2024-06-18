@@ -1,12 +1,8 @@
 
 
 
-DB_CONF = {
-    "host": "_data",
-    "port": "a",
-    "user": "_data",
-    "password": "_data",
-    "db": "_data"
-}
-
-print("_".join([key for key in DB_CONF.keys()]))
+test="//whq"
+test1="/gfdg/"
+test2=test1.lstrip(r'/')
+url = "".join([test, test2])
+print(url)
