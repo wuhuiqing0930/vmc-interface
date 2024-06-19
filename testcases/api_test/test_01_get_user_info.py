@@ -2,7 +2,7 @@ import pytest
 import allure
 from operation.user import get_all_user_info, get_one_user_info
 from testcases.conftest import api_data
-from common.logger import logger
+from utils.common import logger
 
 
 @allure.step("步骤1 ==>> 获取所有用户信息")

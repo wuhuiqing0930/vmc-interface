@@ -1,6 +1,6 @@
 from core.result_base import ResultBase
 from api.user import user
-from common.logger import logger
+from utils.common import logger
 
 
 def get_all_user_info():

@@ -2,7 +2,7 @@ import pytest
 import allure
 from operation.user import delete_user
 from testcases.conftest import api_data
-from common.logger import logger
+from utils.common import logger
 
 
 @allure.step("步骤1 ==>> 根据用户名来删除用户信息")

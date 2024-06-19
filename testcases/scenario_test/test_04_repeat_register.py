@@ -1,7 +1,7 @@
 import pytest
 import allure
 from operation.user import register_user
-from common.logger import logger
+from utils.common import logger
 
 
 @allure.step("步骤1 ==>> 注册用户")

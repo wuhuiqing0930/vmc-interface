@@ -1,10 +1,10 @@
 import os
 from core.rest_client import RestClient
-from common.read_data import data
+from utils.common.read_data import ConfigReadINI
+from utils.init_data_info import GetNormalConfig
 
-BASE_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-data_file_path = os.path.join(BASE_PATH, "config", "setting.ini")
-api_root_url = data.load_ini(data_file_path)["host"]["api_root_url"]
+
+ApiRootUrl = GetNormalConfig.ApiRootUrl
 
 
 class User(RestClient):
@@ -31,4 +31,4 @@ class User(RestClient):
         return self.post("/delete/user/{}".format(name), **kwargs)
 
 
-user = User(api_root_url)
+USER = User(ApiRootUrl)
