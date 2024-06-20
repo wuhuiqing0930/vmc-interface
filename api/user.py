@@ -30,5 +30,8 @@ class User(RestClient):
     def delete(self, name, **kwargs):
         return self.post("/delete/user/{}".format(name), **kwargs)
 
+    def auto_auth(self):
+        pass
+
 
 USER = User(ApiRootUrl)

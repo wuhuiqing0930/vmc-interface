@@ -6,11 +6,19 @@ from utils.common import logger
 
 class RestClient():
 
-    def __init__(self, api_root_url, header=None):
+    _is_instances = dict()
+
+    def __new__(cls, api_root_url, header=None, *args, **kwargs):
+        _is_instance = cls.__name__ + api_root_url + header
+        if _is_instance in cls._is_instances.keys():
+            return cls._is_instances.get(_is_instance)
+        self = super(RestClient, cls).__new__(cls)
         self.api_root_url = api_root_url
         self.session = requests.session()
         if header is not None:
-            self.header = self._update_header(header)
+            self._update_header(header)
+        cls._is_instances.update({_is_instance, self})
+        return self
 
     def _update_header(self, header):
         return self.session.headers.update(header)
@@ -39,6 +47,9 @@ class RestClient():
 
     def patch(self, url, data=None, **kwargs):
         return self.request("PATCH", url, data, **kwargs)
+
+    def close(self):
+        self.session.close()
 
     def request_log(self, url, method, data=None, json=None, params=None, headers=None, files=None, cookies=None,
                     **kwargs):
