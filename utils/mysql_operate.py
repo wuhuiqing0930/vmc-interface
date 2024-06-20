@@ -1,7 +1,7 @@
 import pymysql
-from utils.common.read_data import SETTINGS
-from utils.common.read_data import ConfigReadINI
-from utils.common.logger import logger
+from utils.read_data import SETTINGS
+from utils.read_data import ConfigReadINI
+from utils.logger import logger
 
 _data = ConfigReadINI(SETTINGS).get_element("mysql")
 

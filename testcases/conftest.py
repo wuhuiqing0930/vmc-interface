@@ -1,10 +1,10 @@
 import pytest
 import os
 import allure
-from api.user import user
-from utils.common.mysql_operate import db
-from utils.common.read_data import data
-from utils.common import logger
+from api.user import USER
+from utils.mysql_operate import db
+from utils.read_data import data
+from utils import logger
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -51,7 +51,7 @@ def login_fixture():
         "username": username,
         "password": password
     }
-    loginInfo = user.login(data=payload, headers=header)
+    loginInfo = USER.login(data=payload, headers=header)
     step_login(username, password)
     yield loginInfo.json()
 

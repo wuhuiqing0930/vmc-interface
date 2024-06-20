@@ -2,7 +2,7 @@ import pytest
 import allure
 from operation.user import login_user
 from testcases.conftest import api_data
-from utils.common import logger
+from utils import logger
 
 
 @allure.step("步骤1 ==>> 登录用户")

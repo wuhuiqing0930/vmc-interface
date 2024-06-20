@@ -1,15 +1,14 @@
 import requests
 from urllib.parse import urljoin
 import json as complexjson
-from utils.common import logger
+from utils.logger import logger
 
 
 class RestClient():
-
     _is_instances = dict()
 
-    def __new__(cls, api_root_url, header=None, *args, **kwargs):
-        _is_instance = cls.__name__ + api_root_url + header
+    def __new__(cls, api_root_url: str, header=None, *args, **kwargs):
+        _is_instance = cls.__name__ + api_root_url + str(header)
         if _is_instance in cls._is_instances.keys():
             return cls._is_instances.get(_is_instance)
         self = super(RestClient, cls).__new__(cls)
@@ -17,7 +16,7 @@ class RestClient():
         self.session = requests.session()
         if header is not None:
             self._update_header(header)
-        cls._is_instances.update({_is_instance, self})
+        cls._is_instances.update({_is_instance: self})
         return self
 
     def _update_header(self, header):
@@ -26,7 +25,7 @@ class RestClient():
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
 
-    def request(self, method, end_pointer, *args, **kwargs):
+    def request(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
         response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
         status_code = response.status_code
@@ -65,4 +64,8 @@ class RestClient():
 
 
 if __name__ == '__main__':
-    pass
+    test = RestClient("http://172.29.22.43:9999/")
+    result = test.get("/users")
+    print(result.json(), )
+    test2 = RestClient("http://172.29.22.43:9999/")
+    print(test,test2)

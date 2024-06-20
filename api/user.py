@@ -1,10 +1,5 @@
-import os
 from core.rest_client import RestClient
-from utils.common.read_data import ConfigReadINI
-from utils.init_data_info import GetNormalConfig
-
-
-ApiRootUrl = GetNormalConfig.ApiRootUrl
+from utils.read_data import ApiRootUrl
 
 
 class User(RestClient):
