@@ -1,8 +1,8 @@
 import yaml
 import os
 from configparser import ConfigParser
-from utils.common.logger import logger
-from utils import init_data_info
+from utils.logger import logger
+from utils.common import init_data_info
 
 SETTINGS = init_data_info.GetDefaultConfigPath.SETTINGS.value
 BASEDATA = init_data_info.GetDefaultConfigPath.BASEDATA.value
@@ -94,6 +94,8 @@ class ConfigReadYML():
 class ConfigReadXLXS():
     pass
 
+
+ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
 # if __name__ == '__main__':
 # filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "setting.ini")
 # data_init = ConfigReadINI(filepath)

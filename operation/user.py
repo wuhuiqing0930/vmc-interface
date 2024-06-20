@@ -1,6 +1,6 @@
 from core.result_base import ResultBase
-from api.user import user
-from utils.common import logger
+from api.user import USER
+from utils import logger
 
 
 def get_all_user_info():
@@ -9,7 +9,7 @@ def get_all_user_info():
     :return: 自定义的关键字返回结果 result
     """
     result = ResultBase()
-    res = user.list_all_users()
+    res = USER.list_all_users()
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
@@ -27,7 +27,7 @@ def get_one_user_info(username):
     :return: 自定义的关键字返回结果 result
     """
     result = ResultBase()
-    res = user.list_one_user(username)
+    res = USER.list_one_user(username)
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
@@ -60,7 +60,7 @@ def register_user(username, password, telephone, sex="", address=""):
     header = {
         "Content-Type": "application/json"
     }
-    res = user.register(json=json_data, headers=header)
+    res = USER.register(json=json_data, headers=header)
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
@@ -87,7 +87,7 @@ def login_user(username, password):
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
     }
-    res = user.login(data=payload, headers=header)
+    res = USER.login(data=payload, headers=header)
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
@@ -124,7 +124,7 @@ def update_user(id, admin_user, new_password, new_telephone, token, new_sex="", 
         "telephone": new_telephone,
         "address": new_address
     }
-    res = user.update(id, json=json_data, headers=header)
+    res = USER.update(id, json=json_data, headers=header)
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
@@ -152,7 +152,7 @@ def delete_user(username, admin_user, token):
     header = {
         "Content-Type": "application/json"
     }
-    res = user.delete(username, json=json_data, headers=header)
+    res = USER.delete(username, json=json_data, headers=header)
     result.success = False
     if res.json()["code"] == 0:
         result.success = True
