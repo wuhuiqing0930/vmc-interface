@@ -12,10 +12,10 @@ class GetDefaultConfigPath(Enum):
     BASEDATA = os.path.join(RootPath, 'config', 'base_data.yml')
 
 
-# @unique
-# class GetNormalConfig(Enum):
-#     def __str__(self):
-#         return self.value
-#
-#     from utils.read_data import ConfigReadINI
-#     ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
+@unique
+class GetNormalConfig(Enum):
+    def __str__(self):
+        return self.value
+
+    DefHeader = {"Accept": "application/json, text/plain, */*"}
+

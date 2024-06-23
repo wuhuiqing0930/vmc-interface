@@ -2,13 +2,15 @@ import requests
 from urllib.parse import urljoin
 import json as complexjson
 from utils.logger import logger
+from utils.common.init_data_info import GetNormalConfig
 
 
 class RestClient():
+    __slots__ = ("api_root_url", "session")
     _is_instances = dict()
 
-    def __new__(cls, api_root_url: str, header=None, *args, **kwargs):
-        _is_instance = cls.__name__ + api_root_url + str(header)
+    def __new__(cls, api_root_url: str, header=GetNormalConfig.DefHeader.value, *args, **kwargs):
+        _is_instance = cls.__name__ + api_root_url
         if _is_instance in cls._is_instances.keys():
             return cls._is_instances.get(_is_instance)
         self = super(RestClient, cls).__new__(cls)
@@ -68,4 +70,4 @@ if __name__ == '__main__':
     result = test.get("/users")
     print(result.json(), )
     test2 = RestClient("http://172.29.22.43:9999/")
-    print(test,test2)
+    print(test, test2)

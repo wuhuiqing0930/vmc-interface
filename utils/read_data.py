@@ -96,6 +96,8 @@ class ConfigReadXLXS():
 
 
 ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
+DefUsername = ConfigReadINI().get_element(section="host", option="default_username")
+DefPwd = ConfigReadINI().get_element(section="host", option="default_password")
 # if __name__ == '__main__':
 # filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "setting.ini")
 # data_init = ConfigReadINI(filepath)
