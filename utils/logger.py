@@ -3,7 +3,6 @@ import logging, time, os
 from utils.common.init_data_info import GetDefaultConfigPath
 
 BASE_PATH = GetDefaultConfigPath.RootPath.value
-#BASE_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 LOG_PATH = os.path.join(BASE_PATH, "log")
 if not os.path.exists(LOG_PATH):
     os.mkdir(LOG_PATH)
