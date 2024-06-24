@@ -17,12 +17,12 @@ class RestClient():
         self.api_root_url = api_root_url
         self.session = requests.session()
         if header is not None:
-            self._update_header(header)
+            self.update_header(header)
         cls._is_instances.update({_is_instance: self})
         return self
 
-    def _update_header(self, header):
-        return self.session.headers.update(header)
+    def update_header(self, header):
+        self.session.headers.update(header)
 
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
