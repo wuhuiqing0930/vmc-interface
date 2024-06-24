@@ -22,6 +22,7 @@ class MyConfigParser(ConfigParser):
     @property
     def data_ini(self) -> dict:
         config_init = ConfigParser()
+        config_init.optionxform = str
         config_init.read(self._filepath, encoding="utf-8")
         sections = config_init.sections()
         for section in sections:
@@ -45,16 +46,15 @@ class MyConfigParser(ConfigParser):
     def data_excel(self):
         pass
 
-    def optionxform(self, optionstr):
-        return optionstr
-
 
 class ConfigReadINI():
     def __init__(self, filepath=SETTINGS):
         self.config = MyConfigParser(filepath).data_ini
 
-    def get_element(self, section, option=None) -> any:
-        section, option = section.lower() if section else None, option.lower() if option else None
+    def get_element(self, section=None, option=None) -> any:
+        # section, option = section.lower() if section else None, option.lower() if option else None
+        if section is None and option is None:
+            return self.config
         try:
             element = self.config[section][option] if option else self.config[section]
             return element
@@ -98,6 +98,8 @@ class ConfigReadXLXS():
 ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
 DefUsername = ConfigReadINI().get_element(section="host", option="default_username")
 DefPwd = ConfigReadINI().get_element(section="host", option="default_password")
+InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_token")
+
 # if __name__ == '__main__':
 # filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "setting.ini")
 # data_init = ConfigReadINI(filepath)

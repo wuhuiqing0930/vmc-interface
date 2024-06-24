@@ -6,11 +6,11 @@ from utils.logger import logger
 _data = ConfigReadINI(SETTINGS).get_element("mysql")
 
 DB_CONF_BASE = {
-    "host": _data["MYSQL_HOST".lower()],
-    "port": int(_data["MYSQL_PORT".lower()]),
-    "user": _data["MYSQL_USER".lower()],
-    "password": _data["MYSQL_PASSWD".lower()],
-    "db": _data["MYSQL_DB".lower()]
+    "host": _data["MYSQL_HOST"],
+    "port": int(_data["MYSQL_PORT"]),
+    "user": _data["MYSQL_USER"],
+    "password": _data["MYSQL_PASSWD"],
+    "db": _data["MYSQL_DB"]
 }
 
 
