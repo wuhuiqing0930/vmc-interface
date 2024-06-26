@@ -3,23 +3,66 @@ from urllib.parse import urljoin
 import json as complexjson
 from utils.logger import logger
 from utils.common.init_data_info import GetNormalConfig
+from utils.read_data import InitToken
+
+
+def re_auth_token(func):
+    def auth_wrapper(self: RestClient, *args, **kwargs):
+        header = {'Authorization': self.refresh_token}
+        url = "/oauth/token"
+        data = ""
+        auth_result = self.session.post(url=url, data=data, header=header)
+        new_token = {"Authorization": auth_result.json().get("refresh_token")}
+        self.update_header(new_token)
+        logger.info("token expired, need refresh")
+        return func(self, *args, **kwargs)
+
+    return auth_wrapper
 
 
 class RestClient():
-    __slots__ = ("api_root_url", "session")
+    __slots__ = ("api_root_url", "session", "access_token", "refresh_token", "username", "password")
     _is_instances = dict()
 
-    def __new__(cls, api_root_url: str, header=GetNormalConfig.DefHeader.value, *args, **kwargs):
+    def __new__(cls, api_root_url: str, username=None, password=None, header=GetNormalConfig.DefHeader.value, *args,
+                **kwargs):
         _is_instance = cls.__name__ + api_root_url
         if _is_instance in cls._is_instances.keys():
             return cls._is_instances.get(_is_instance)
         self = super(RestClient, cls).__new__(cls)
         self.api_root_url = api_root_url
         self.session = requests.session()
+        self.username = username
+        self.password = password
+        self.access_token = None
+        self.refresh_token = None
         if header is not None:
             self.update_header(header)
         cls._is_instances.update({_is_instance: self})
         return self
+
+    def init_token(self, username, password):
+        logger.info("Check if username and password valid")
+        url = '/oauth/token'
+        header = {'Authorization': InitToken}
+        data = {
+            'username': username,
+            'password': password,
+            'scope': 'vnfm',
+            'grant_type': 'password'
+        }
+        try:
+            self.update_header(header=header)
+            login_result = self.post(url=url, data=data)
+            if login_result.status_code == 200:
+                login_result = login_result.json()
+                return login_result.get("access_token"), login_result.get("refresh_token")
+            else:
+                logger.info("login error, make sure username and password is correct")
+                exit()
+        except requests.exceptions.InvalidURL as e:
+            logger.info(e)
+            exit()
 
     def update_header(self, header):
         self.session.headers.update(header)
@@ -27,6 +70,7 @@ class RestClient():
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
 
+    @re_auth_token
     def request(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
         response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
