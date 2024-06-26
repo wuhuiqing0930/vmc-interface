@@ -1,56 +1,20 @@
 import requests
 import json
 from core.rest_client import RestClient
-from utils.read_data import ApiRootUrl, DefPwd, DefUsername, InitToken
 from utils.logger import logger
 from utils.common.init_data_info import GetNormalConfig
+from utils.read_data import ApiRootUrl, DefPwd, DefUsername
 
-
-def re_auth(func):
-    def auth(func):
-        return func
-    return auth
 
 class User(RestClient):
-    __slots__ = ("username", "password", "access_token", "refresh_token")
+    __slots__ = ("username", "password")
 
     def __new__(cls, username=DefUsername, password=DefPwd, *args, **kwargs):
         self = super(User, cls).__new__(cls, api_root_url=ApiRootUrl, *args, **kwargs)
         self.username = username
         self.password = password
-        self.access_token = None
-        self.refresh_token = None
         self._init_token()
         return self
-
-    def _init_token(self):
-        logger.info("Check if username and password valid")
-        url = '/oauth/token'
-        header = {'Authorization': InitToken}
-        data = {
-            'username': 'admin',
-            'password': 'admin01',
-            'scope': 'vnfm',
-            'grant_type': 'password'
-        }
-        try:
-            self.update_header(header=header)
-            login_result = self.post(url=url, data=data)
-            if login_result.status_code == 200:
-                result = login_result.json()
-                self.access_token = result.get("access_token")
-                self.refresh_token = result.get("access_token")
-            else:
-                logger.info("login error")
-                exit()
-        except requests.exceptions.InvalidURL as e:
-            logger.info(e)
-            exit()
-
-    @re_auth
-    def refresh_token(self):
-        pass
-
 
     def list_all_users(self, **kwargs):
         return self.get("/users", **kwargs)
@@ -75,7 +39,6 @@ class User(RestClient):
 
 
 USER = User()
-
 
 if __name__ == '__main__':
     pass
