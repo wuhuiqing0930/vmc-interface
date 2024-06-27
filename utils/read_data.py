@@ -1,6 +1,7 @@
 import yaml
 import os
 import pandas as pd
+from pandas import *
 from configparser import ConfigParser
 from utils.logger import logger
 from utils.common import init_data_info
@@ -89,7 +90,6 @@ class ConfigReadYML():
 
 
 class ConfigReadExcel():
-
     _is_instances = dict()
 
     def __new__(cls, filename, *args, **kwargs):
@@ -99,15 +99,30 @@ class ConfigReadExcel():
         self = super(ConfigReadExcel, cls).__new__(cls)
         self.filename = filename
         self.workbook = pd.ExcelFile(self.filename)
+        self.header = []
         cls._is_instances.update({_is_instance: self})
         return self
 
-    def get_data_by_sheet_name(self, sheet_name: str, key: dict):
-        fd = self.workbook.parse(sheet_name=sheet_name)
+    def sheet_dataframe(self, sheet_name) -> DataFrame:
+        return self.workbook.parse(sheet_name=sheet_name)
 
+    def get_data_by_sheet_name(self, sheet_name: str, key: dict = {}):
+        fd: DataFrame = self.sheet_dataframe(sheet_name)
+        fd_dict = fd.to_dict()
+        self.header = fd.columns.to_list()
+        fd_rows_num = fd.shape[0]
+        fd_rows_all = []
+        for row_num in range(0, fd_rows_num):
+            fd_rows_data = dict()
+            for _key, _value in fd_dict.items():
+                key = _key
+                value = _value.pop(row_num)
+                fd_rows_data.update({key: value})
+            fd_rows_all.append(fd_rows_data)
+        return fd_rows_all
 
-
-
+    def get_header_by_sheet_name(self, sheet_name: str):
+        pass
 
 
 ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
@@ -117,6 +132,5 @@ InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_toke
 
 if __name__ == '__main__':
     filepath1 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "api_test_data.xlsx")
-    yml_init = MyConfigParser(filepath1)
-    yml1 = yml_init.data_excel
-    print(type(yml1))
+    yml_init = ConfigReadExcel(filepath1)
+    data = yml_init.get_data_by_sheet_name("Users")
