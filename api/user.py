@@ -10,10 +10,9 @@ class User(RestClient):
     __slots__ = ("username", "password")
 
     def __new__(cls, username=DefUsername, password=DefPwd, *args, **kwargs):
-        self = super(User, cls).__new__(cls, api_root_url=ApiRootUrl, *args, **kwargs)
-        self.username = username
-        self.password = password
-        self._init_token()
+        self = super(User, cls).__new__(cls, api_root_url=ApiRootUrl, username=username, password=password,
+                                        web_type="VMC",
+                                        *args, **kwargs)
         return self
 
     def list_all_users(self, **kwargs):
@@ -42,17 +41,3 @@ USER = User()
 
 if __name__ == '__main__':
     pass
-# user1 = User()
-# user1.auto_token()
-# data = {
-#     'username': 'admin',
-#     'password': 'admin01',
-#     'scope': 'vnfm',
-#     'grant_type': 'password'
-# }
-# header = {"Accept": "application/json, text/plain, */*",
-#           'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-#           'Authorization': "Basic dm5mbTo4YTU1OTFhOS05ZjMzLTQzMjQtYjM4Ny1lMTQ0OTY3OGU4ZDI="
-#           }
-# test = requests.session().request(method='POST', url="https://[172:0:16::aa04]/oauth/token", data=data,
-#                                   headers=header)

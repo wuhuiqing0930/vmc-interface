@@ -12,8 +12,15 @@ def re_auth_token(func):
         url = "/oauth/token"
         data = ""
         auth_result = self.session.post(url=url, data=data, header=header)
-        new_token = {"Authorization": auth_result.json().get("refresh_token")}
-        self.update_header(new_token)
+        if auth_result.status_code == 200:
+            new_access_token = {"Authorization": auth_result.json().get("refresh_token")}
+            self.update_header(new_access_token)
+            self.refresh_token = new_access_token
+        else:  # 需更新
+            new_access_token, new_refresh_token = self.init_token()[0], self.init_token()[1]
+            self.update_header(new_refresh_token)
+            self.access_token = new_access_token
+            self.refresh_token = new_refresh_token
         logger.info("token expired, need refresh")
         return func(self, *args, **kwargs)
 
@@ -21,10 +28,11 @@ def re_auth_token(func):
 
 
 class RestClient():
-    __slots__ = ("api_root_url", "session", "access_token", "refresh_token", "username", "password")
+    __slots__ = ("api_root_url", "session", "access_token", "refresh_token", "username", "password", "web_type")
     _is_instances = dict()
 
-    def __new__(cls, api_root_url: str, username=None, password=None, header=GetNormalConfig.DefHeader.value, *args,
+    def __new__(cls, api_root_url: str, username=None, password=None, web_type=None,
+                header=GetNormalConfig.DefHeader.value, *args,
                 **kwargs):
         _is_instance = cls.__name__ + api_root_url
         if _is_instance in cls._is_instances.keys():
@@ -34,20 +42,25 @@ class RestClient():
         self.session = requests.session()
         self.username = username
         self.password = password
-        self.access_token = None
-        self.refresh_token = None
+        self.web_type = web_type
+        if self.web_type == "VMC":
+            self.access_token = self.init_token()[0]
+            self.refresh_token = self.init_token()[1]
+        else:
+            self.access_token = None
+            self.refresh_token = None
         if header is not None:
             self.update_header(header)
         cls._is_instances.update({_is_instance: self})
         return self
 
-    def init_token(self, username, password):
+    def init_token(self):
         logger.info("Check if username and password valid")
         url = '/oauth/token'
         header = {'Authorization': InitToken}
         data = {
-            'username': username,
-            'password': password,
+            'username': self.username,
+            'password': self.password,
             'scope': 'vnfm',
             'grant_type': 'password'
         }
@@ -70,8 +83,21 @@ class RestClient():
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
 
+    def request(self, method, end_pointer, *args, **kwargs):
+        if self.web_type == "VMC":
+            return self.request_vmc(self, method, end_pointer, *args, **kwargs)
+        else:
+            return self.request_normal(self, method, end_pointer, *args, **kwargs)
+
     @re_auth_token
-    def request(self, method, end_pointer, *args, **kwargs) -> requests.Response:
+    def request_vmc(self, method, end_pointer, *args, **kwargs) -> requests.Response:
+        url = self._build_url(end_pointer)
+        response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
+        status_code = response.status_code
+        self.request_log(url, method)
+        return response
+
+    def request_normal(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
         response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
         status_code = response.status_code
