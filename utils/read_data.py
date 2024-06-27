@@ -1,5 +1,6 @@
 import yaml
 import os
+import pandas as pd
 from configparser import ConfigParser
 from utils.logger import logger
 from utils.common import init_data_info
@@ -41,10 +42,6 @@ class MyConfigParser(ConfigParser):
         self._data = [i for i in yml_generator][0]
         logger.info("读到数据 ==>>  {} ".format(self._data))
         return self._data
-
-    @property
-    def data_excel(self):
-        pass
 
 
 class ConfigReadINI():
@@ -91,8 +88,26 @@ class ConfigReadYML():
             return self.config
 
 
-class ConfigReadXLXS():
-    pass
+class ConfigReadExcel():
+
+    _is_instances = dict()
+
+    def __new__(cls, filename, *args, **kwargs):
+        _is_instance = cls.__name__ + filename
+        if _is_instance in cls._is_instances.keys():
+            return cls._is_instances.get(_is_instance)
+        self = super(ConfigReadExcel, cls).__new__(cls)
+        self.filename = filename
+        self.workbook = pd.ExcelFile(self.filename)
+        cls._is_instances.update({_is_instance: self})
+        return self
+
+    def get_data_by_sheet_name(self, sheet_name: str, key: dict):
+        fd = self.workbook.parse(sheet_name=sheet_name)
+
+
+
+
 
 
 ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
@@ -100,13 +115,8 @@ DefUsername = ConfigReadINI().get_element(section="host", option="default_userna
 DefPwd = ConfigReadINI().get_element(section="host", option="default_password")
 InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_token")
 
-# if __name__ == '__main__':
-# filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "setting.ini")
-# data_init = ConfigReadINI(filepath)
-# mysqlhost = data_init.get_element(section="mysql")
-# print(mysqlhost)
-
-# filepath1 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "base_data.yml")
-# yml_init = ConfigReadYML(filepath1)
-# yml1 = yml_init.get_element("init_sql", "insert_delete_user")
-# print(yml1)
+if __name__ == '__main__':
+    filepath1 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "api_test_data.xlsx")
+    yml_init = MyConfigParser(filepath1)
+    yml1 = yml_init.data_excel
+    print(type(yml1))
