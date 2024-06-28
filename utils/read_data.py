@@ -8,13 +8,13 @@ from utils.common import init_data_info
 
 SETTINGS = init_data_info.GetDefaultConfigPath.SETTINGS.value
 BASEDATA = init_data_info.GetDefaultConfigPath.BASEDATA.value
+DefCasesProperty = init_data_info.GetNormalConfig.DefCasesProperty
 
 
-class MyConfigParser(ConfigParser):
+class MyConfigParser():
     __slots__ = ("_filepath", "_data")
 
     def __init__(self, filepath):
-        super().__init__(self)
         if os.path.exists(filepath) is False:
             print("file is none")
             exit()
@@ -90,6 +90,7 @@ class ConfigReadYML():
 
 
 class ConfigReadExcel():
+    __slots__ = ("filename", "workbook")
     _is_instances = dict()
 
     def __new__(cls, filename, *args, **kwargs):
@@ -99,18 +100,37 @@ class ConfigReadExcel():
         self = super(ConfigReadExcel, cls).__new__(cls)
         self.filename = filename
         self.workbook = pd.ExcelFile(self.filename)
-        self.header = []
         cls._is_instances.update({_is_instance: self})
         return self
 
-    def sheet_dataframe(self, sheet_name) -> DataFrame:
-        return self.workbook.parse(sheet_name=sheet_name)
+    def file_close(self):
+        self.workbook.close()
 
-    def get_data_by_sheet_name(self, sheet_name: str, key: dict = {}):
-        fd: DataFrame = self.sheet_dataframe(sheet_name)
-        fd_dict = fd.to_dict()
-        self.header = fd.columns.to_list()
-        fd_rows_num = fd.shape[0]
+
+class ConfigReadExcelBySheet(ConfigReadExcel):
+    __slots__ = ("sheet_name", "fd")
+
+    def __new__(cls, filename, sheet_name, *args, **kwargs):
+        self = super(ConfigReadExcelBySheet, cls).__new__(cls, filename=filename)
+        self.sheet_name = sheet_name
+        self.fd: DataFrame = self.workbook.parse(sheet_name=self.sheet_name)
+        return self
+
+    def check_file_header(self):
+        header = self.fd.columns.to_list()
+        if header == DefCasesProperty:
+            return header
+        else:
+            logger.info("cases property in file is incorrect, please check {}".format(self.filename))
+            exit()
+
+    @property
+    def get_cases_rows(self):
+        return self.fd.shape[0]
+
+    def get_all_data_by_sheet_name(self) -> dict:
+        fd_dict = self.fd.to_dict()
+        fd_rows_num = self.get_cases_rows
         fd_rows_all = []
         for row_num in range(0, fd_rows_num):
             fd_rows_data = dict()
@@ -121,8 +141,11 @@ class ConfigReadExcel():
             fd_rows_all.append(fd_rows_data)
         return fd_rows_all
 
-    def get_header_by_sheet_name(self, sheet_name: str):
-        pass
+    def get_data_by_case_id(self, sheet_name: str, casaid: str):
+        fd_header, fd_rows_all = self.get_all_data_by_sheet_name(sheet_name=sheet_name)
+
+    def file_close(self):
+        self.workbook.close()
 
 
 ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
@@ -132,5 +155,6 @@ InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_toke
 
 if __name__ == '__main__':
     filepath1 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "api_test_data.xlsx")
-    yml_init = ConfigReadExcel(filepath1)
-    data = yml_init.get_data_by_sheet_name("Users")
+    yml_init = ConfigReadExcelBySheet(filepath1, "Users")
+    data = yml_init.check_file_header()
+    print(data)
