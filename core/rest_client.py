@@ -56,7 +56,7 @@ class RestClient():
 
     def init_token(self):
         logger.info("Check if username and password valid")
-        url = '/oauth/token'
+        url = r'/oauth/token'
         header = {'Authorization': InitToken}
         data = {
             'username': self.username,
@@ -89,7 +89,7 @@ class RestClient():
         else:
             return self.request_normal(self, method, end_pointer, *args, **kwargs)
 
-    @re_auth_token
+    #@re_auth_token
     def request_vmc(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
         response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
@@ -136,8 +136,5 @@ class RestClient():
 
 
 if __name__ == '__main__':
-    test = RestClient("http://172.29.22.43:9999/")
-    result = test.get("/users")
-    print(result.json(), )
-    test2 = RestClient("http://172.29.22.43:9999/")
-    print(test, test2)
+    test = RestClient("https://[172:0:16::aa04]", "admin", "admin01")
+    data = test.init_token()
