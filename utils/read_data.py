@@ -1,14 +1,14 @@
 import yaml
 import os
 import pandas as pd
-from pandas import *
 from configparser import ConfigParser
 from utils.logger import logger
 from utils.common import init_data_info
 
 SETTINGS = init_data_info.GetDefaultConfigPath.SETTINGS.value
 BASEDATA = init_data_info.GetDefaultConfigPath.BASEDATA.value
-DefCasesProperty = init_data_info.GetNormalConfig.DefCasesProperty
+CASEADATA = init_data_info.GetDefaultConfigPath.CASEADATA.value
+DefCasesProperty = init_data_info.GetNormalConfig.get_def_cases_property()
 
 
 class MyConfigParser():
@@ -99,7 +99,11 @@ class ConfigReadExcel():
             return cls._is_instances.get(_is_instance)
         self = super(ConfigReadExcel, cls).__new__(cls)
         self.filename = filename
-        self.workbook = pd.ExcelFile(self.filename)
+        try:
+            self.workbook = pd.ExcelFile(self.filename)
+        except FileNotFoundError as e:
+            logger.info("The file is not exist,Pls check".format(self.filename))
+            exit()
         cls._is_instances.update({_is_instance: self})
         return self
 
@@ -113,7 +117,7 @@ class ConfigReadExcelBySheet(ConfigReadExcel):
     def __new__(cls, filename, sheet_name, *args, **kwargs):
         self = super(ConfigReadExcelBySheet, cls).__new__(cls, filename=filename)
         self.sheet_name = sheet_name
-        self.fd: DataFrame = self.workbook.parse(sheet_name=self.sheet_name)
+        self.fd = self.workbook.parse(sheet_name=self.sheet_name)
         return self
 
     def check_file_header(self):
@@ -121,14 +125,15 @@ class ConfigReadExcelBySheet(ConfigReadExcel):
         if header == DefCasesProperty:
             return header
         else:
-            logger.info("cases property in file is incorrect, please check {}".format(self.filename))
+            logger.info("cases property in file is unmatch, please check {}".format(self.filename))
             exit()
 
     @property
     def get_cases_rows(self):
         return self.fd.shape[0]
 
-    def get_all_data_by_sheet_name(self) -> dict:
+    @property
+    def get_all_data_by_sheet_name(self) -> list:
         fd_dict = self.fd.to_dict()
         fd_rows_num = self.get_cases_rows
         fd_rows_all = []
@@ -141,8 +146,22 @@ class ConfigReadExcelBySheet(ConfigReadExcel):
             fd_rows_all.append(fd_rows_data)
         return fd_rows_all
 
-    def get_data_by_case_id(self, sheet_name: str, casaid: str):
-        fd_header, fd_rows_all = self.get_all_data_by_sheet_name(sheet_name=sheet_name)
+    def get_data_by_case_id(self, case_id: str) -> dict:
+        """
+        input casa_id in CasaName. like "1.1.1" in "1.1.1_create_an_admin_user"
+        """
+        data_all = self.get_all_data_by_sheet_name
+        try:
+            casa_name_header = [case_name for case_name in self.check_file_header() if "casename" in case_name.lower()][
+                0]
+        except IndexError as e:
+            logger.info("casaname header is unmatched in {}".format(self.filename))
+        try:
+            case_element = [case for case in data_all if case_id in case.get(casa_name_header)][0]
+            return case_element
+        except IndexError as e:
+            logger.info("casaname header is unmatched in {}".format(self.filename))
+            exit()
 
     def file_close(self):
         self.workbook.close()
@@ -152,9 +171,7 @@ ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
 DefUsername = ConfigReadINI().get_element(section="host", option="default_username")
 DefPwd = ConfigReadINI().get_element(section="host", option="default_password")
 InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_token")
+UserCaseData = ConfigReadExcelBySheet(filename=CASEADATA, sheet_name="Users")
 
 if __name__ == '__main__':
-    filepath1 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "api_test_data.xlsx")
-    yml_init = ConfigReadExcelBySheet(filepath1, "Users")
-    data = yml_init.check_file_header()
-    print(data)
+    pass
