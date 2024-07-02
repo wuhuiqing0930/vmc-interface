@@ -1,63 +1,76 @@
-import requests
-from urllib.parse import urljoin
 import json as complexjson
-from utils.logger import logger
+import warnings
+import json
+from urllib.parse import urljoin
+
+import requests
+from urllib3.exceptions import InsecureRequestWarning
+
 from utils.common.init_data_info import GetNormalConfig
+from utils.logger import logger
 from utils.read_data import InitToken
+
+warnings.filterwarnings('ignore', category=InsecureRequestWarning)
+
+DefHeaders = GetNormalConfig.DefHeader.value
+DefHeaderKey = GetNormalConfig.DefHeaderSort.value
 
 
 def re_auth_token(func):
-    def auth_wrapper(self: RestClient, *args, **kwargs):
-        header = {'Authorization': self.refresh_token}
-        url = "/oauth/token"
-        data = ""
-        auth_result = self.session.post(url=url, data=data, header=header)
+    def auth_wrapper(self: 'RestClient', *args, **kwargs):
+        url = self._build_url("/oauth/token")
+        data = {
+            'refresh_token': self.refresh_token.split(" ")[1],
+            'grant_type': 'refresh_token'
+        }
+        auth_result = self.session.post(url=url, data=data, verify=False)
         if auth_result.status_code == 200:
-            new_access_token = {"Authorization": auth_result.json().get("refresh_token")}
-            self.update_header(new_access_token)
-            self.refresh_token = new_access_token
-        else:  # 需更新
-            new_access_token, new_refresh_token = self.init_token()[0], self.init_token()[1]
-            self.update_header(new_refresh_token)
-            self.access_token = new_access_token
-            self.refresh_token = new_refresh_token
-        logger.info("token expired, need refresh")
+            self.access_token = self._build_token_data(auth_result.json().get("access_token"))
+            self.refresh_token = self._build_token_data(auth_result.json().get("refresh_token"))
+            logger.info("access_token expired, need refresh")
+        else:
+            self.access_token, self.refresh_token = self._build_token_data(
+                self.init_token()[0]), self._build_token_data(
+                self.init_token()[1])
+            logger.info("refresh_token expired, need auto re-login ")
+
         return func(self, *args, **kwargs)
 
     return auth_wrapper
 
 
 class RestClient():
-    __slots__ = ("api_root_url", "session", "access_token", "refresh_token", "username", "password", "web_type")
+    __slots__ = (
+        "api_root_url", "header", "session", "access_token", "refresh_token", "username", "password", "web_type")
     _is_instances = dict()
 
     def __new__(cls, api_root_url: str, username=None, password=None, web_type=None,
-                header=GetNormalConfig.DefHeader.value, *args,
+                header: dict = DefHeaders, *args,
                 **kwargs):
         _is_instance = cls.__name__ + api_root_url
         if _is_instance in cls._is_instances.keys():
             return cls._is_instances.get(_is_instance)
         self = super(RestClient, cls).__new__(cls)
         self.api_root_url = api_root_url
+        self.header = header
         self.session = requests.session()
         self.username = username
         self.password = password
         self.web_type = web_type
         if self.web_type == "VMC":
-            self.access_token = self.init_token()[0]
-            self.refresh_token = self.init_token()[1]
+            self.access_token = self._build_token_data(self.init_token()[0])
+            self.refresh_token = self._build_token_data(self.init_token()[1])
         else:
             self.access_token = None
             self.refresh_token = None
-        if header is not None:
-            self.update_header(header)
+        if self.header is not None:
+            self.update_header(self.header)
         cls._is_instances.update({_is_instance: self})
         return self
 
     def init_token(self):
-        logger.info("Check if username and password valid")
         url = r'/oauth/token'
-        header = {'Authorization': InitToken}
+        self.header.update(self._build_token(InitToken))
         data = {
             'username': self.username,
             'password': self.password,
@@ -65,41 +78,60 @@ class RestClient():
             'grant_type': 'password'
         }
         try:
-            self.update_header(header=header)
-            login_result = self.post(url=url, data=data)
+            self.update_header(header=self.header)
+            login_result = self.session.post(self._build_url(url), data, verify=False)
             if login_result.status_code == 200:
-                login_result = login_result.json()
-                return login_result.get("access_token"), login_result.get("refresh_token")
+                login_result_data = login_result.json()
+                return login_result_data.get("access_token"), login_result_data.get("refresh_token")
             else:
                 logger.info("login error, make sure username and password is correct")
+                print(login_result.status_code)
                 exit()
         except requests.exceptions.InvalidURL as e:
             logger.info(e)
             exit()
 
-    def update_header(self, header):
-        self.session.headers.update(header)
+    def update_header(self, header: dict):
+        _key = header.keys()
+        _key_sorted = sorted(_key, key=lambda _k: DefHeaderKey[_k])
+        _header = {k: header.get(k) for k in _key_sorted}
+        self.session.headers.update(_header)
+
+    def _complete_header_content(self):
+        pass
 
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
 
+    @staticmethod
+    def _build_token_data(token: str) -> str:
+        _token = "".join(["Bearer", " ", token])
+        return _token
+
+    @staticmethod
+    def _build_token(token: str) -> dict:
+        _token = {"Authorization": token}
+        return _token
+
     def request(self, method, end_pointer, *args, **kwargs):
         if self.web_type == "VMC":
-            return self.request_vmc(self, method, end_pointer, *args, **kwargs)
+            return self.request_vmc(method, end_pointer, *args, **kwargs)
         else:
-            return self.request_normal(self, method, end_pointer, *args, **kwargs)
+            return self.request_normal(method, end_pointer, *args, **kwargs)
 
-    #@re_auth_token
+    @re_auth_token
     def request_vmc(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
-        response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
+        self.header.update(self._build_token(self.access_token))
+        self.update_header(header=self.header)
+        response = self.session.request(method, url, verify=False, *args, **kwargs)
         status_code = response.status_code
         self.request_log(url, method)
         return response
 
     def request_normal(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
-        response = self.session.request(method=method, url=url, verify=False, *args, **kwargs)
+        response = self.session.request(method, url, verify=False, *args, **kwargs)
         status_code = response.status_code
         self.request_log(url, method)
         return response
@@ -136,5 +168,7 @@ class RestClient():
 
 
 if __name__ == '__main__':
-    test = RestClient("https://[172:0:16::aa04]", "admin", "admin01")
-    data = test.init_token()
+    test = RestClient("https://[172:0:16::aa04]", "admin", "admin01", web_type="VMC")
+    data = json.dumps({"username": "autoadmin", "password": "autoadminpassword", "scope": "vnfm", "grant_type": "password"})
+    result = test.post(url="/auth/users", json=data)
+    print(result.json(), result.status_code)

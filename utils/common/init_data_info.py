@@ -18,8 +18,12 @@ class GetNormalConfig(Enum):
     def __str__(self):
         return self.value
 
-    DefHeader = {"Accept": "application/json, text/plain, */*",
-                 'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2'}
+    DefHeader = {"Accept": "application/json, text/plain, */*"}
+
+    DefHeaderSort = {value: index for index, value in
+                     enumerate(['Host', 'host', 'Accept', 'Origin', 'Referer', 'Sec-GPC', 'Connection', 'User-Agent',
+                                'Content-Type', 'Authorization', 'Sec-Fetch-Dest', 'Sec-Fetch-Mode', 'Sec-Fetch-Site',
+                                'Accept-Encoding', 'Accept-Language'])}
 
     @staticmethod
     def get_def_cases_property():

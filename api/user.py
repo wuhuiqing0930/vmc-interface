@@ -15,26 +15,22 @@ class User(RestClient):
                                         *args, **kwargs)
         return self
 
-    def list_all_users(self, **kwargs):
-        return self.get("/users", **kwargs)
-
-    def list_one_user(self, username, **kwargs):
-        return self.get("/users/{}".format(username), **kwargs)
-
-    def register(self, **kwargs):
-        return self.post("/register", **kwargs)
-
-    def login(self, **kwargs):
-        return self.post("/login", **kwargs)
-
-    def update(self, user_id, **kwargs):
-        return self.put("/update/user/{}".format(user_id), **kwargs)
-
-    def delete(self, name, **kwargs):
-        return self.post("/delete/user/{}".format(name), **kwargs)
-
-    def auto_auth(self):
+    def add_users(self, **kwargs):
         pass
+
+    def user_login(self, **kwargs):
+        pass
+
+    def del_users(self, **kwargs):
+        pass
+
+    def update_password(self, **kwargs):
+        url = "/auth/users/api/password"
+        data = {"username": "testtest", "name": "testtest", "password": "casa1234", "enabled": 1, "email": "11111111@qq.com",
+         "group": "admin"}
+
+    def check_user(self, **kwargs):
+        return self.get("/auth/users", **kwargs)
 
 
 USER = User()
