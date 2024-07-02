@@ -55,7 +55,7 @@ class ConfigReadINI():
             return self.config
         try:
             element = self.config[section][option] if option else self.config[section]
-            return element
+            return element.strip('"')
         except KeyError as e:
             logger.info("cannot find element {}".format(e))
             return None
