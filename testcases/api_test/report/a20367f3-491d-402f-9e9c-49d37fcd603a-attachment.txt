@@ -1,0 +1,13 @@
+INFO     log:test_01_get_user_info.py:38 *************** 开始执行用例 ***************
+INFO     log:test_01_get_user_info.py:14 步骤1 ==>> 获取所有用户信息
+INFO     log:rest_client.py:30 access_token expired, need refresh
+INFO     log:rest_client.py:169 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+INFO     log:rest_client.py:170 接口请求方式 ==>> POST
+INFO     log:rest_client.py:172 接口请求头 ==>> null
+INFO     log:rest_client.py:173 接口请求 params 参数 ==>> null
+INFO     log:rest_client.py:174 接口请求体 data 参数 ==>> null
+INFO     log:rest_client.py:175 接口请求体 json 参数 ==>> null
+INFO     log:rest_client.py:176 接口上传附件 files 参数 ==>> None
+INFO     log:rest_client.py:177 接口 cookies 参数 ==>> null
+INFO     log:test_01_get_user_info.py:41 code ==>> 期望结果：， 实际结果：500
+INFO     log:test_01_get_user_info.py:42 code ==>> 期望结果：， 实际结果：{'status': 'INTERNAL_SERVER_ERROR', 'appCode': 100, 'message': 'Error processing request, see logs for details'}

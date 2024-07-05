@@ -27,6 +27,7 @@ class GetNormalConfig(Enum):
 
     @staticmethod
     def get_def_cases_property():
-        def_cases_property = ['Module', 'Sub_Module', 'Domain', 'CaseName', 'Pre_Data', 'URL', 'Method', 'Expect_code',
-                              'Expect_result']
+        def_cases_property = ['Module', 'Sub_Module', 'Domain', 'CaseName', 'Pre_Data', 'URL', 'CaseMethod',
+                              'Expect_code',
+                              'Expect_result', 'Note']
         return def_cases_property

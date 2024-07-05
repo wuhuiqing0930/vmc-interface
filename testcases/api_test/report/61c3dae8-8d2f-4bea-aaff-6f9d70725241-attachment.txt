@@ -1,0 +1,3 @@
+preeeee
+['Users', 'Create_user', nan, '1.1.1_create_admin_user_admin', '{"username":"auto_admin","name":"auto_admin","password":"casa1234","enabled":1,"email":"auto_admin@qq.com","group":"admin"}', '/auth/users', 'POST', 200.0, nan, nan] testing
+clearrrr

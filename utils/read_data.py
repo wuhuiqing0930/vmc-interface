@@ -1,5 +1,6 @@
 import yaml
 import os
+import typing
 import pandas as pd
 from configparser import ConfigParser
 from utils.logger import logger
@@ -9,6 +10,7 @@ SETTINGS = init_data_info.GetDefaultConfigPath.SETTINGS.value
 BASEDATA = init_data_info.GetDefaultConfigPath.BASEDATA.value
 CASEADATA = init_data_info.GetDefaultConfigPath.CASEADATA.value
 DefCasesProperty = init_data_info.GetNormalConfig.get_def_cases_property()
+UNION = typing.Union
 
 
 class MyConfigParser():
@@ -121,9 +123,10 @@ class ConfigReadExcelBySheet(ConfigReadExcel):
         return self
 
     def check_file_header(self):
-        header = self.fd.columns.to_list()
-        if header == DefCasesProperty:
-            return header
+        _header = self.fd.columns.to_list()
+        if _header == DefCasesProperty:
+            header = map(lambda x: x.lower(), _header)
+            return list(header)
         else:
             logger.info("cases property in file is unmatch, please check {}".format(self.filename))
             exit()
@@ -134,34 +137,24 @@ class ConfigReadExcelBySheet(ConfigReadExcel):
 
     @property
     def get_all_data_by_sheet_name(self) -> list:
-        fd_dict = self.fd.to_dict()
-        fd_rows_num = self.get_cases_rows
-        fd_rows_all = []
-        for row_num in range(0, fd_rows_num):
-            fd_rows_data = dict()
-            for _key, _value in fd_dict.items():
-                key = _key
-                value = _value.pop(row_num)
-                fd_rows_data.update({key: value})
-            fd_rows_all.append(fd_rows_data)
-        return fd_rows_all
+        fd_list = self.fd.values.tolist()
+        return fd_list
 
-    def get_data_by_case_id(self, case_id: str) -> dict:
+    def _get_data_rows(self, column_name, column_data) -> UNION[list, tuple]:
+        data = self.fd[self.fd[column_name].str.startswith(column_data)]
+        return data.values.tolist()
+
+    def get_data_by_case_id(self, case_id: str, column_name="CaseName"):
         """
         input casa_id in CasaName. like "1.1.1" in "1.1.1_create_an_admin_user"
         """
-        data_all = self.get_all_data_by_sheet_name
-        try:
-            casa_name_header = [case_name for case_name in self.check_file_header() if "casename" in case_name.lower()][
-                0]
-        except IndexError as e:
-            logger.info("casaname header is unmatched in {}".format(self.filename))
-        try:
-            case_element = [case for case in data_all if case_id in case.get(casa_name_header)][0]
-            return case_element
-        except IndexError as e:
-            logger.info("casaname header is unmatched in {}".format(self.filename))
-            exit()
+        return self._get_data_rows(column_name=column_name, column_data="".join([case_id, "_"]))
+
+    def get_data_by_submodule(self, submodule: str, column_name="Sub_Module") -> list:
+        """
+        input casa_id in CasaName. like "Create_user" in "1.1.1_create_an_admin_user"
+        """
+        return self._get_data_rows(column_name=column_name, column_data=submodule)
 
     def file_close(self):
         self.workbook.close()
@@ -171,7 +164,8 @@ ApiRootUrl = ConfigReadINI().get_element(section="host", option="api_root_url")
 DefUsername = ConfigReadINI().get_element(section="host", option="default_username")
 DefPwd = ConfigReadINI().get_element(section="host", option="default_password")
 InitToken = ConfigReadINI().get_element(section="RequestInit", option="init_token")
-UserCaseData = ConfigReadExcelBySheet(filename=CASEADATA, sheet_name="Users")
+UserCaseData: ConfigReadExcelBySheet = ConfigReadExcelBySheet(filename=CASEADATA, sheet_name="Users")
+UserCaseDataHeader: list = UserCaseData.check_file_header()
 
 if __name__ == '__main__':
-    pass
+    print(UserCaseDataHeader)

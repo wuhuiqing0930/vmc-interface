@@ -2,7 +2,7 @@ import json as complexjson
 import warnings
 import json
 from urllib.parse import urljoin
-
+from json import JSONDecoder
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 
@@ -37,6 +37,18 @@ def re_auth_token(func):
         return func(self, *args, **kwargs)
 
     return auth_wrapper
+
+
+def header_complete(func):
+    def header_wrapper(self: 'RestClient', *args, **kwargs):
+        if (kwargs.get('data') is not None and isinstance(JSONDecoder().decode(kwargs.get('data')),
+                                                          dict)) | (kwargs.get('json') is not None and isinstance(
+                JSONDecoder().decode(kwargs.get('json')), dict)):
+            self.header.update({'Content-Type': 'application/json'})
+            self.update_header(self.header)
+        return func(self, *args, **kwargs)
+
+    return header_wrapper
 
 
 class RestClient():
@@ -97,9 +109,6 @@ class RestClient():
         _header = {k: header.get(k) for k in _key_sorted}
         self.session.headers.update(_header)
 
-    def _complete_header_content(self):
-        pass
-
     def _build_url(self, end_pointer):
         return urljoin(self.api_root_url, end_pointer)
 
@@ -120,6 +129,7 @@ class RestClient():
             return self.request_normal(method, end_pointer, *args, **kwargs)
 
     @re_auth_token
+    @header_complete
     def request_vmc(self, method, end_pointer, *args, **kwargs) -> requests.Response:
         url = self._build_url(end_pointer)
         self.header.update(self._build_token(self.access_token))
@@ -140,7 +150,7 @@ class RestClient():
         return self.request("GET", url, **kwargs)
 
     def post(self, url, data=None, json=None, **kwargs):
-        return self.request("POST", url, data, json, **kwargs)
+        return self.request("POST", url, data=data, json=json, **kwargs)
 
     def put(self, url, data=None, **kwargs):
         return self.request("PUT", url, data, **kwargs)
@@ -169,6 +179,7 @@ class RestClient():
 
 if __name__ == '__main__':
     test = RestClient("https://[172:0:16::aa04]", "admin", "admin01", web_type="VMC")
-    data = json.dumps({"username": "autoadmin", "password": "autoadminpassword", "scope": "vnfm", "grant_type": "password"})
-    result = test.post(url="/auth/users", json=data)
+    data = json.dumps(
+        {"username": "autoadmin", "password": "autoadminpassword", "scope": "vnfm", "grant_type": "password"})
+    result = test.post(url="/auth/users", data=data)
     print(result.json(), result.status_code)

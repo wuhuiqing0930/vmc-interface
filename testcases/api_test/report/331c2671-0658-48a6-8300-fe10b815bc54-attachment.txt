@@ -1,0 +1,13 @@
+[2024-07-04 22:07:12,838][test_01_get_user_info.py 38][INFO]: *************** 开始执行用例 ***************
+[2024-07-04 22:07:12,838][test_01_get_user_info.py 14][INFO]: 步骤1 ==>> 获取所有用户信息
+[2024-07-04 22:07:13,064][rest_client.py 30][INFO]: access_token expired, need refresh
+[2024-07-04 22:07:13,101][rest_client.py 169][INFO]: 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+[2024-07-04 22:07:13,102][rest_client.py 170][INFO]: 接口请求方式 ==>> POST
+[2024-07-04 22:07:13,102][rest_client.py 172][INFO]: 接口请求头 ==>> null
+[2024-07-04 22:07:13,102][rest_client.py 173][INFO]: 接口请求 params 参数 ==>> null
+[2024-07-04 22:07:13,103][rest_client.py 174][INFO]: 接口请求体 data 参数 ==>> null
+[2024-07-04 22:07:13,104][rest_client.py 175][INFO]: 接口请求体 json 参数 ==>> null
+[2024-07-04 22:07:13,104][rest_client.py 176][INFO]: 接口上传附件 files 参数 ==>> None
+[2024-07-04 22:07:13,105][rest_client.py 177][INFO]: 接口 cookies 参数 ==>> null
+[2024-07-04 22:07:13,105][test_01_get_user_info.py 42][INFO]: code ==>> 期望结果：， 实际结果：500
+[2024-07-04 22:07:13,105][test_01_get_user_info.py 43][INFO]: code ==>> 期望结果：， 实际结果：{'status': 'INTERNAL_SERVER_ERROR', 'appCode': 100, 'message': 'Error processing request, see logs for details'}

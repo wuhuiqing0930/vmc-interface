@@ -1,0 +1,1 @@
+"{\"username\":\"auto_admin\",\"name\":\"auto_admin\",\"password\":\"casa1234\",\"enabled\":1,\"email\":\"auto_admin@qq.com\",\"group\":\"admin\"}" <class 'str'>
