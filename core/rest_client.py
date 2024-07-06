@@ -19,6 +19,12 @@ DefHeaderKey = GetNormalConfig.DefHeaderSort.value
 def re_auth_token(func):
     def auth_wrapper(self: 'RestClient', *args, **kwargs):
         url = self._build_url("/oauth/token")
+        try:
+            self.header.pop('Content-Type')
+            self.session.headers.pop('Content-Type')
+        except KeyError:
+            pass
+        print(self.session.headers,"in re_auth")
         data = {
             'refresh_token': self.refresh_token.split(" ")[1],
             'grant_type': 'refresh_token'
@@ -42,10 +48,16 @@ def re_auth_token(func):
 def header_complete(func):
     def header_wrapper(self: 'RestClient', *args, **kwargs):
         if (kwargs.get('data') is not None and isinstance(JSONDecoder().decode(kwargs.get('data')),
-                                                          dict)) | (kwargs.get('json') is not None and isinstance(
-                JSONDecoder().decode(kwargs.get('json')), dict)):
+                                                          dict)) | (
+                kwargs.get('json') is not None and isinstance(JSONDecoder().decode(kwargs.get('json')), dict)):
             self.header.update({'Content-Type': 'application/json'})
             self.update_header(self.header)
+        else:
+            try:
+                self.header.pop('Content-Type')
+                self.session.headers.pop('Content-Type')
+            except KeyError:
+                pass
         return func(self, *args, **kwargs)
 
     return header_wrapper
@@ -91,6 +103,7 @@ class RestClient():
         }
         try:
             self.update_header(header=self.header)
+            print(self.session.headers,"in init_toiken")
             login_result = self.session.post(self._build_url(url), data, verify=False)
             if login_result.status_code == 200:
                 login_result_data = login_result.json()

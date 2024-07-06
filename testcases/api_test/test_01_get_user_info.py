@@ -8,7 +8,6 @@ from utils.read_data import UserCaseData
 data_row = UserCaseData.get_data_by_case_id("1.1.1")
 data_row1 = UserCaseData.get_data_by_submodule("Create_user")
 
-
 @allure.step("步骤1 ==>> 获取所有用户信息")
 def step_1():
     logger.info("步骤1 ==>> 获取所有用户信息")
@@ -29,7 +28,7 @@ class TestGetUserInfo():
     @pytest.mark.parametrize(
         ('module', 'sub_module', 'domain', 'casename', 'pre_data', 'url', 'casemethod', 'expect_code', 'expect_result',
          'note'),
-        data_row)
+        data_row1)
     def test_add_user(self, add_user_setup_down, module, sub_module, domain, casename, pre_data, url, casemethod,
                       expect_code,
                       expect_result, note):
@@ -40,10 +39,10 @@ class TestGetUserInfo():
         step_1()
         result = USER.add_users(pre_data)
         username = json.loads(pre_data).get("username")
-        result_check = USER.get_users()
+        result_check = USER.get_users(username)
         logger.info("code ==>> 期望结果：， 实际结果：{}".format(result.status_code))
-        logger.info("code ==>> 期望结果：， 实际结果：{}".format(result.json()))
         assert result.status_code == expect_code
+        assert isinstance(result_check, int)
 
         logger.info("*************** 结束执行用例 ***************")
 

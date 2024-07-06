@@ -2,7 +2,7 @@ import pytest
 import os
 import allure
 from api.user import USER
-from utils import logger
+from utils.logger import logger
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 

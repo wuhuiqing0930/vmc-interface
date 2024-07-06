@@ -51,11 +51,18 @@ class User(RestClient):
             return result
         except IndexError as e:
             logger.info("error user is not exist")
-            exit()
 
 
 USER: User = User()
 
 if __name__ == '__main__':
-    result = USER.del_users("auto_admin")
-    print(result)
+
+    result = USER.add_users(json.dumps(
+        {"username": "auto_admin", "name": "auto_admin", "password": "casa1234", "enabled": 1,
+         "email": "auto_admin@qq.com", "group": "admin"}))
+    print("###########add finish################")
+    username = "auto_admin"
+    result_check = USER.get_users(username)
+    print(result_check)
+    USER.del_users("auto_admin")
+    print("###########delete finish################")

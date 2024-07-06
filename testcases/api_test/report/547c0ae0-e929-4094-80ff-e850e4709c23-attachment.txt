@@ -1,3 +1,0 @@
-preeeee
-['Users', 'Create_user', nan, '1.1.11_create_admin_user_admin_existed', nan, '/auth/users', 'POST', 400.0, '{"status":null,"appCode":405,"message":"Username: auto_admin already exists"}', nan] testing
-clearrrr
