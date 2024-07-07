@@ -1,6 +1,7 @@
 import pytest
 import os
 import allure
+import json
 from api.user import USER
 from utils.logger import logger
 
@@ -46,11 +47,13 @@ def step_last():
 #
 @pytest.fixture(scope="function")
 def add_user_setup_down(request):
-    module, sub_module, domain, casename, pre_data, url, casemethod, expect_code, expect_result, note = request.node.callspec.params
+    _params: dict = request.node.callspec.params
+    module, sub_module, domain, casename, pre_data, url, casemethod, expect_code, expect_result, note = _params.values()
     logger.info("start up")
     yield module, sub_module, domain, casename, pre_data, url, casemethod, expect_code, expect_result, note
-    USER.del_users(username=casename)
-    logger.info("clear test data {}".format(casename))
+    username = json.loads(pre_data).get("username")
+    USER.del_users(username=username)
+    logger.info("clear test data {}".format(username))
 
 #
 #

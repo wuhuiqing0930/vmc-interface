@@ -1,0 +1,43 @@
+INFO     log:conftest.py:52 start up
+INFO     log:test_01_get_user_info.py:38 *************** 开始执行用例 ***************
+INFO     log:test_01_get_user_info.py:13 步骤1 ==>> 获取所有用户信息
+INFO     log:rest_client.py:40 refresh_token expired, need auto re-login 
+INFO     log:rest_client.py:180 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+INFO     log:rest_client.py:181 接口请求方式 ==>> POST
+INFO     log:rest_client.py:183 接口请求头 ==>> null
+INFO     log:rest_client.py:184 接口请求 params 参数 ==>> null
+INFO     log:rest_client.py:185 接口请求体 data 参数 ==>> null
+INFO     log:rest_client.py:186 接口请求体 json 参数 ==>> null
+INFO     log:rest_client.py:187 接口上传附件 files 参数 ==>> None
+INFO     log:rest_client.py:188 接口 cookies 参数 ==>> null
+INFO     log:rest_client.py:40 refresh_token expired, need auto re-login 
+INFO     log:rest_client.py:180 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+INFO     log:rest_client.py:181 接口请求方式 ==>> GET
+INFO     log:rest_client.py:183 接口请求头 ==>> null
+INFO     log:rest_client.py:184 接口请求 params 参数 ==>> null
+INFO     log:rest_client.py:185 接口请求体 data 参数 ==>> null
+INFO     log:rest_client.py:186 接口请求体 json 参数 ==>> null
+INFO     log:rest_client.py:187 接口上传附件 files 参数 ==>> None
+INFO     log:rest_client.py:188 接口 cookies 参数 ==>> null
+INFO     log:user.py:53 error user is not exist
+INFO     log:test_01_get_user_info.py:43 code ==>> 期望结果：， 实际结果：400
+INFO     log:rest_client.py:40 refresh_token expired, need auto re-login 
+INFO     log:rest_client.py:180 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+INFO     log:rest_client.py:181 接口请求方式 ==>> GET
+INFO     log:rest_client.py:183 接口请求头 ==>> null
+INFO     log:rest_client.py:184 接口请求 params 参数 ==>> null
+INFO     log:rest_client.py:185 接口请求体 data 参数 ==>> null
+INFO     log:rest_client.py:186 接口请求体 json 参数 ==>> null
+INFO     log:rest_client.py:187 接口上传附件 files 参数 ==>> None
+INFO     log:rest_client.py:188 接口 cookies 参数 ==>> null
+INFO     log:user.py:53 error user is not exist
+INFO     log:rest_client.py:40 refresh_token expired, need auto re-login 
+INFO     log:rest_client.py:180 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users/None
+INFO     log:rest_client.py:181 接口请求方式 ==>> DELETE
+INFO     log:rest_client.py:183 接口请求头 ==>> null
+INFO     log:rest_client.py:184 接口请求 params 参数 ==>> null
+INFO     log:rest_client.py:185 接口请求体 data 参数 ==>> null
+INFO     log:rest_client.py:186 接口请求体 json 参数 ==>> null
+INFO     log:rest_client.py:187 接口上传附件 files 参数 ==>> None
+INFO     log:rest_client.py:188 接口 cookies 参数 ==>> null
+INFO     log:conftest.py:56 clear test data

@@ -24,7 +24,6 @@ def re_auth_token(func):
             self.session.headers.pop('Content-Type')
         except KeyError:
             pass
-        print(self.session.headers,"in re_auth")
         data = {
             'refresh_token': self.refresh_token.split(" ")[1],
             'grant_type': 'refresh_token'
@@ -103,7 +102,6 @@ class RestClient():
         }
         try:
             self.update_header(header=self.header)
-            print(self.session.headers,"in init_toiken")
             login_result = self.session.post(self._build_url(url), data, verify=False)
             if login_result.status_code == 200:
                 login_result_data = login_result.json()
