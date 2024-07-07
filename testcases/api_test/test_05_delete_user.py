@@ -1,7 +1,7 @@
 import pytest
 import allure
 from operation.user import delete_user
-from testcases.conftest import api_data
+from testcases.conftest import user_test_data
 from utils import logger
 
 
@@ -28,7 +28,7 @@ class TestUserDelete():
     @allure.title("测试数据：【 {username}，{except_result}，{except_code}，{except_msg} 】")
     @pytest.mark.single
     @pytest.mark.parametrize("username, except_result, except_code, except_msg",
-                             api_data["test_delete_user"])
+                             user_test_data["test_delete_user"])
     @pytest.mark.usefixtures("insert_delete_user")
     def test_delete_user(self, login_fixture, username, except_result, except_code, except_msg):
         logger.info("*************** 开始执行用例 ***************")

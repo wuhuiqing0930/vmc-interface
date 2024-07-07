@@ -1,7 +1,7 @@
 import pytest
 import allure
 from operation.user import register_user
-from testcases.conftest import api_data
+from testcases.conftest import user_test_data
 from utils import logger
 
 
@@ -24,7 +24,7 @@ class TestUserRegister():
         "测试数据：【 {username}，{password}，{telephone}，{sex}，{address}，{except_result}，{except_code}，{except_msg}】")
     @pytest.mark.single
     @pytest.mark.parametrize("username, password, telephone, sex, address, except_result, except_code, except_msg",
-                             api_data["test_register_user"])
+                             user_test_data["test_register_user"])
     @pytest.mark.usefixtures("delete_register_user")
     def test_register_user(self, username, password, telephone, sex, address, except_result, except_code, except_msg):
         logger.info("*************** 开始执行用例 ***************")

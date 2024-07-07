@@ -1,7 +1,7 @@
 import pytest
 import allure
 from operation.user import update_user
-from testcases.conftest import api_data
+from testcases.conftest import user_test_data
 from utils import logger
 
 
@@ -30,7 +30,7 @@ class TestUpdate():
     @pytest.mark.single
     @pytest.mark.parametrize("id, new_password, new_telephone, new_sex, new_address, "
                              "except_result, except_code, except_msg",
-                             api_data["test_update_user"])
+                             user_test_data["test_update_user"])
     @pytest.mark.usefixtures("update_user_telephone")
     def test_update_user(self, login_fixture, id, new_password, new_telephone, new_sex, new_address,
                          except_result, except_code, except_msg):
