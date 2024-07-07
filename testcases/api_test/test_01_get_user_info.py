@@ -48,7 +48,11 @@ class TestGetUserInfo():
         else:
             print(result_check)
             assert result_check is None
+<<<<<<< HEAD
         logger.info("*************** 结束执行用例.... ***************")
+=======
+        logger.info("*************** 结束执行用例!!! ***************")
+>>>>>>> 579e9782927b50bbcb198b6775f3dbbdd07693cc
 
 
 if __name__ == '__main__':
