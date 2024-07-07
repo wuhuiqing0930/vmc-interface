@@ -1,0 +1,41 @@
+[2024-07-07 15:06:07,506][conftest.py 52][INFO]: start up
+[2024-07-07 15:06:07,509][test_01_get_user_info.py 39][INFO]: *************** 开始执行用例 ***************
+[2024-07-07 15:06:07,509][test_01_get_user_info.py 13][INFO]: 步骤1 ==>> 获取所有用户信息
+[2024-07-07 15:06:08,242][rest_client.py 40][INFO]: refresh_token expired, need auto re-login 
+[2024-07-07 15:06:08,423][rest_client.py 180][INFO]: 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+[2024-07-07 15:06:08,423][rest_client.py 181][INFO]: 接口请求方式 ==>> POST
+[2024-07-07 15:06:08,423][rest_client.py 183][INFO]: 接口请求头 ==>> null
+[2024-07-07 15:06:08,424][rest_client.py 184][INFO]: 接口请求 params 参数 ==>> null
+[2024-07-07 15:06:08,424][rest_client.py 185][INFO]: 接口请求体 data 参数 ==>> null
+[2024-07-07 15:06:08,424][rest_client.py 186][INFO]: 接口请求体 json 参数 ==>> null
+[2024-07-07 15:06:08,424][rest_client.py 187][INFO]: 接口上传附件 files 参数 ==>> None
+[2024-07-07 15:06:08,424][rest_client.py 188][INFO]: 接口 cookies 参数 ==>> null
+[2024-07-07 15:06:09,089][rest_client.py 40][INFO]: refresh_token expired, need auto re-login 
+[2024-07-07 15:06:09,139][rest_client.py 180][INFO]: 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+[2024-07-07 15:06:09,140][rest_client.py 181][INFO]: 接口请求方式 ==>> GET
+[2024-07-07 15:06:09,140][rest_client.py 183][INFO]: 接口请求头 ==>> null
+[2024-07-07 15:06:09,140][rest_client.py 184][INFO]: 接口请求 params 参数 ==>> null
+[2024-07-07 15:06:09,140][rest_client.py 185][INFO]: 接口请求体 data 参数 ==>> null
+[2024-07-07 15:06:09,140][rest_client.py 186][INFO]: 接口请求体 json 参数 ==>> null
+[2024-07-07 15:06:09,140][rest_client.py 187][INFO]: 接口上传附件 files 参数 ==>> None
+[2024-07-07 15:06:09,141][rest_client.py 188][INFO]: 接口 cookies 参数 ==>> null
+[2024-07-07 15:06:09,141][test_01_get_user_info.py 44][INFO]: code ==>> 期望结果：， 实际结果：200
+[2024-07-07 15:06:10,223][rest_client.py 40][INFO]: refresh_token expired, need auto re-login 
+[2024-07-07 15:06:10,262][rest_client.py 180][INFO]: 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users
+[2024-07-07 15:06:10,262][rest_client.py 181][INFO]: 接口请求方式 ==>> GET
+[2024-07-07 15:06:10,262][rest_client.py 183][INFO]: 接口请求头 ==>> null
+[2024-07-07 15:06:10,262][rest_client.py 184][INFO]: 接口请求 params 参数 ==>> null
+[2024-07-07 15:06:10,262][rest_client.py 185][INFO]: 接口请求体 data 参数 ==>> null
+[2024-07-07 15:06:10,262][rest_client.py 186][INFO]: 接口请求体 json 参数 ==>> null
+[2024-07-07 15:06:10,263][rest_client.py 187][INFO]: 接口上传附件 files 参数 ==>> None
+[2024-07-07 15:06:10,263][rest_client.py 188][INFO]: 接口 cookies 参数 ==>> null
+[2024-07-07 15:06:10,923][rest_client.py 40][INFO]: refresh_token expired, need auto re-login 
+[2024-07-07 15:06:10,958][rest_client.py 180][INFO]: 接口请求地址 ==>> https://[172:0:16::aa04]/auth/users/526
+[2024-07-07 15:06:10,959][rest_client.py 181][INFO]: 接口请求方式 ==>> DELETE
+[2024-07-07 15:06:10,959][rest_client.py 183][INFO]: 接口请求头 ==>> null
+[2024-07-07 15:06:10,960][rest_client.py 184][INFO]: 接口请求 params 参数 ==>> null
+[2024-07-07 15:06:10,960][rest_client.py 185][INFO]: 接口请求体 data 参数 ==>> null
+[2024-07-07 15:06:10,963][rest_client.py 186][INFO]: 接口请求体 json 参数 ==>> null
+[2024-07-07 15:06:10,963][rest_client.py 187][INFO]: 接口上传附件 files 参数 ==>> None
+[2024-07-07 15:06:10,963][rest_client.py 188][INFO]: 接口 cookies 参数 ==>> null
+[2024-07-07 15:06:10,963][conftest.py 56][INFO]: clear test data auto_admin
